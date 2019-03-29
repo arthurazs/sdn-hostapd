@@ -1,3 +1,5 @@
 # make
 *.o
 *.d
+hostapd/hostapd
+hostapd_cli
