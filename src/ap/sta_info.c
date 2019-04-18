@@ -38,6 +38,8 @@
 #include "sta_info.h"
 #include "vlan.h"
 #include "wps_hostapd.h"
+#include "clientAuth.h"
+#include <string.h>
 
 static void ap_sta_remove_in_other_bss(struct hostapd_data *hapd,
 				       struct sta_info *sta);
@@ -509,13 +511,13 @@ skip_poll:
 			hostapd_drv_sta_deauth(
 				hapd, sta->addr,
 				WLAN_REASON_PREV_AUTH_NOT_VALID);
-		} else {
+		} /* else {
 			reason = (sta->timeout_next == STA_DISASSOC) ?
 				WLAN_REASON_DISASSOC_DUE_TO_INACTIVITY :
 				WLAN_REASON_PREV_AUTH_NOT_VALID;
 
 			hostapd_drv_sta_disassoc(hapd, sta->addr, reason);
-		}
+		} */
 	}
 
 	switch (sta->timeout_next) {
@@ -529,7 +531,7 @@ skip_poll:
 		break;
 	case STA_DISASSOC:
 	case STA_DISASSOC_FROM_CLI:
-		ap_sta_set_authorized(hapd, sta, 0);
+		/* ap_sta_set_authorized(hapd, sta, 0);
 		sta->flags &= ~WLAN_STA_ASSOC;
 		ieee802_1x_notify_port_enabled(sta->eapol_sm, 0);
 		if (!sta->acct_terminate_cause)
@@ -550,8 +552,9 @@ skip_poll:
 		eloop_register_timeout(AP_DEAUTH_DELAY, 0, ap_handle_timer,
 				       hapd, sta);
 		mlme_disassociate_indication(hapd, sta, reason);
-		break;
+		break; */
 	case STA_DEAUTH:
+		break;
 	case STA_REMOVE:
 		hostapd_logger(hapd, sta->addr, HOSTAPD_MODULE_IEEE80211,
 			       HOSTAPD_LEVEL_INFO, "deauthenticated due to "
@@ -1229,6 +1232,15 @@ void ap_sta_set_authorized(struct hostapd_data *hapd, struct sta_info *sta,
 		    hapd->msg_ctx_parent != hapd->msg_ctx)
 			wpa_msg_no_global(hapd->msg_ctx_parent, MSG_INFO,
 					  AP_STA_DISCONNECTED "%s", buf);
+
+		char message[] = "{\"AUTH-NOT\":{\"address\":\"%s\"}}";
+		char strMAC[18];
+		sprintf(strMAC, "%02x:%02x:%02x:%02x:%02x:%02x", MAC2STR(sta->addr));
+		int total = strlen(message)+strlen(strMAC);
+		char* data = (char*) malloc(total);
+		sprintf(data, message, strMAC);
+		sendMessage("127.0.0.1", 10000, data);
+		free(data);
 	}
 
 #ifdef CONFIG_FST
