@@ -7,17 +7,18 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
+#define IP_DEST "10.0.0.1"
 #define TCP_PORT 10000
 #define MAXDATASIZE 1024
 
-int sendMessage(char hostname[], int port, char data[])
+int sendMessage(char data[])
 {
 	int my_socket, bytes;
 	char buffer[MAXDATASIZE];
 	struct hostent *host_entry;
 	struct sockaddr_in ip_address;
 
-	if ((host_entry=gethostbyname(hostname)) == NULL)
+	if ((host_entry=gethostbyname(IP_DEST)) == NULL)
 	{
 		herror("gethostbyname");
 		exit(1);
@@ -29,7 +30,7 @@ int sendMessage(char hostname[], int port, char data[])
 	}
 
 	ip_address.sin_family = AF_INET;
-	ip_address.sin_port = htons(port);
+	ip_address.sin_port = htons(TCP_PORT);
 	ip_address.sin_addr = *((struct in_addr *) host_entry->h_addr);
 	bzero(&(ip_address.sin_zero), 8);
 
@@ -44,7 +45,7 @@ int sendMessage(char hostname[], int port, char data[])
 		close(my_socket);
 		exit(-1);
 	}
-	printf(">>> Sent %s to %s\n", data, hostname);
+	printf(">>> Sent %s to %s\n", data, IP_DEST);
 
 	if ((bytes=recv(my_socket, buffer, MAXDATASIZE, 0)) == -1)
 	{
@@ -55,17 +56,5 @@ int sendMessage(char hostname[], int port, char data[])
 	buffer[bytes] = '\0';
 	printf(">>> Got %s\n", buffer);
 	close(my_socket);
-	return 0;
-}
-
-int main_old(int argc, char *argv[])
-{
-	if (argc != 3) {
-		fprintf(stderr, "Usage: client hostname message\n");
-		exit(1);
-	}
-
-	sendMessage(argv[1], TCP_PORT, argv[2]);
-
 	return 0;
 }

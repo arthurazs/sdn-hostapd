@@ -123,7 +123,7 @@ void ieee802_1x_set_sta_authorized(struct hostapd_data *hapd,
 		char* data = (char*) malloc(total);
 
 		sprintf(data, message, strMAC, sta->eapol_sm->identity);
-		sendMessage("127.0.0.1", 10000, data);
+		sendMessage(data);
 		free(data);
 	} else {
 		ap_sta_set_authorized(hapd, sta, 0);

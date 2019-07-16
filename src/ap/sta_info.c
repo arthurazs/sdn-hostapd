@@ -1239,7 +1239,7 @@ void ap_sta_set_authorized(struct hostapd_data *hapd, struct sta_info *sta,
 		int total = strlen(message)+strlen(strMAC);
 		char* data = (char*) malloc(total);
 		sprintf(data, message, strMAC);
-		sendMessage("127.0.0.1", 10000, data);
+		sendMessage(data);
 		free(data);
 	}
 
