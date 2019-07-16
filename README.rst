@@ -6,9 +6,9 @@ Quickstart
 
 .. code:: bash
 
+  apt install build-essential libssl-dev libnl-3-dev libnl-genl-3-dev pkg-config
   git clone https://github.com/arthurazs/sdn-hostapd.git
   cd sdn-hostapd/hostapd
-  apt install build-essential libssl-dev libnl-3-dev libnl-genl-3-dev pkg-config
   make
   ./hostapd authflow.conf
 
