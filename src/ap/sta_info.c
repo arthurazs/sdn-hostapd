@@ -38,7 +38,7 @@
 #include "sta_info.h"
 #include "vlan.h"
 #include "wps_hostapd.h"
-#include "clientAuth.h"
+#include "client_auth.h"
 #include <string.h>
 
 static void ap_sta_remove_in_other_bss(struct hostapd_data *hapd,
@@ -1233,14 +1233,14 @@ void ap_sta_set_authorized(struct hostapd_data *hapd, struct sta_info *sta,
 			wpa_msg_no_global(hapd->msg_ctx_parent, MSG_INFO,
 					  AP_STA_DISCONNECTED "%s", buf);
 
-		char message[] = "{\"AUTH-NOT\":{\"address\":\"%s\"}}";
+		// char message[] = "{\"AUTH-NOT\":{\"address\":\"%s\"}}";
 		char strMAC[18];
 		sprintf(strMAC, "%02x:%02x:%02x:%02x:%02x:%02x", MAC2STR(sta->addr));
-		int total = strlen(message)+strlen(strMAC);
-		char* data = (char*) malloc(total);
-		sprintf(data, message, strMAC);
-		sendMessage(data);
-		free(data);
+		// int total = strlen(message)+strlen(strMAC);
+		// char* data = (char*) malloc(total);
+		// sprintf(data, message, strMAC);
+		send_message(strMAC, "AUTH-NOT");
+		// free(data);
 	}
 
 #ifdef CONFIG_FST

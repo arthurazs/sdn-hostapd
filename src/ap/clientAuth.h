@@ -1,1 +1,0 @@
-int sendMessage(char data[]);

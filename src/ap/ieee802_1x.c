@@ -34,7 +34,7 @@
 /* FIX: Not really a good thing to require ieee802_11.h here.. (FILS) */
 #include "ieee802_11.h"
 #include "ieee802_1x.h"
-#include "clientAuth.h"
+#include "client_auth.h"
 #include <string.h>
 
 
@@ -114,17 +114,17 @@ void ieee802_1x_set_sta_authorized(struct hostapd_data *hapd,
 			       HOSTAPD_LEVEL_DEBUG, "authorizing port");
 		if (!sta->eapol_sm){return;}
 
-		char message[] = "{\"AUTH-OK\":{\"address\":\"%s\",\"identity\":\"%s\"}}";
+		// char message[] = "{\"AUTH-OK\":{\"address\":\"%s\",\"identity\":\"%s\"}}";
 		char strMAC[18];
 		sprintf(strMAC, "%02x:%02x:%02x:%02x:%02x:%02x", MAC2STR(sta->addr));
 		printf (">>> %s (%s) authorized\n", sta->eapol_sm->identity, strMAC);
 
-		int total = strlen(message)+strlen(strMAC)+strlen(sta->eapol_sm->identity);
-		char* data = (char*) malloc(total);
+		// int total = strlen(message)+strlen(strMAC)+strlen(sta->eapol_sm->identity);
+		// char* data = (char*) malloc(total);
 
-		sprintf(data, message, strMAC, sta->eapol_sm->identity);
-		sendMessage(data);
-		free(data);
+		// sprintf(data, message, strMAC, sta->eapol_sm->identity);
+		send_message(strMAC, sta->eapol_sm->identity);
+		// free(data);
 	} else {
 		ap_sta_set_authorized(hapd, sta, 0);
 		res = hostapd_set_authorized(hapd, sta, 0);
