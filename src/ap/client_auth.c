@@ -13,7 +13,8 @@
 #define IP_DEST "10.0.1.1"
 #define TCP_PORT 8080
 #define BUFFER_SIZE 1024
-#define MESSAGE "GET /authenticated/%s/%s\r\n\r\n"
+#define MESSAGE_AUTH "GET /authenticated/%s/%s\r\n\r\n"
+#define MESSAGE_DEAUTH "GET /deauthenticated/%s\r\n\r\n"
 
 int socket_connect(char *host, in_port_t port){
 	struct hostent *hp;
@@ -43,17 +44,45 @@ int socket_connect(char *host, in_port_t port){
 	return sock;
 }
 
-int send_message(char mac[], char identity[])
+int authenticated(char mac[], char identity[])
 {
     int fd;
 	char buffer[BUFFER_SIZE];
 
     fd = socket_connect(IP_DEST, TCP_PORT);
 
-    int total = strlen(MESSAGE)+strlen(mac)+strlen(identity);
+    int total = strlen(MESSAGE_AUTH)+strlen(mac)+strlen(identity);
     char* data = (char*) malloc(total);
 
-    sprintf(data, MESSAGE, mac, identity);
+    sprintf(data, MESSAGE_AUTH, mac, identity);
+
+	write(fd, data, strlen(data));
+	bzero(buffer, BUFFER_SIZE);
+
+	while(read(fd, buffer, BUFFER_SIZE - 1) != 0){
+		fprintf(stderr, "%s", buffer);
+		bzero(buffer, BUFFER_SIZE);
+	}
+
+    printf("\n");
+
+	shutdown(fd, SHUT_RDWR);
+	close(fd);
+
+	return 0;
+}
+
+int deauthenticated(char mac[])
+{
+    int fd;
+	char buffer[BUFFER_SIZE];
+
+    fd = socket_connect(IP_DEST, TCP_PORT);
+
+    int total = strlen(MESSAGE_DEAUTH)+strlen(mac);
+    char* data = (char*) malloc(total);
+
+    sprintf(data, MESSAGE_DEAUTH, mac);
 
 	write(fd, data, strlen(data));
 	bzero(buffer, BUFFER_SIZE);

@@ -1,1 +1,2 @@
-int send_message(char mac[], char identity[]);
+int authenticated(char mac[], u8* identity);
+int deauthenticated(char mac[]);
