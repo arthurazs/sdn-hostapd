@@ -10,7 +10,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-#define IP_DEST "10.0.0.1"
+#define IP_DEST "10.0.1.1"
 #define TCP_PORT 8080
 #define BUFFER_SIZE 1024
 #define MESSAGE "GET /authenticated/%s/%s\r\n\r\n"
@@ -48,8 +48,7 @@ int send_message(char mac[], char identity[])
     int fd;
 	char buffer[BUFFER_SIZE];
 
-    fd = socket_connect("10.0.0.1", 8080);
-    // write(fd, char[]*, len);
+    fd = socket_connect(IP_DEST, TCP_PORT);
 
     int total = strlen(MESSAGE)+strlen(mac)+strlen(identity);
     char* data = (char*) malloc(total);
